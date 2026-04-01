@@ -17,7 +17,6 @@ const getAllProducts = async (req, res) => {
       products = products.filter(p => p.category === category);
     }
 
-    // Remove random sorting and slicing to show all filtered products
     res.render('products', {
       products: products,
       pageTitle: 'Shop',

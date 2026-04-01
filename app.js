@@ -15,16 +15,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const shopRoutes = require('./routes/shop');
 app.use(shopRoutes);
 
-
-// Connect to MySQL
-db.connect((err) => {
-  if (err) {
-    console.log('Database connection failed:', err);
-  } else {
-    console.log('Connected to MySQL');
-  }
-});
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
