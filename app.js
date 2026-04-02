@@ -28,6 +28,11 @@ app.use(session({
 const shopRoutes = require('./routes/shop');
 app.use(shopRoutes);
 
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
