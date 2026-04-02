@@ -15,13 +15,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session configuration for cart persistence
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'fetchit-cart-secret-key-2024',
+  secret: 'fetchit-cart-secret-key-2024',
   resave: false,
   saveUninitialized: true,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
+    httpOnly: true
   }
 }));
 
@@ -34,7 +33,4 @@ app.use((err, req, res, next) => {
   res.status(500).render('500', { pageTitle: 'Server Error' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(3000);
