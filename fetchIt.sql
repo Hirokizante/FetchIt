@@ -2,6 +2,8 @@
 CREATE DATABASE fetchit;
 USE fetchit;
 
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS carts;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS accounts;
@@ -32,15 +34,58 @@ CREATE TABLE products (
   PRIMARY KEY (product_id)
 );
 
+-- Cart table with session-based persistence and optimistic concurrency control
 CREATE TABLE carts (
-  cart_id     INT       NOT NULL AUTO_INCREMENT,
-  account_id  INT       NOT NULL,
-  product_id  INT       NOT NULL,
-  quantity    INT       NOT NULL DEFAULT 1,
-  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  cart_id      INT       NOT NULL AUTO_INCREMENT,
+  session_id   VARCHAR(255) NOT NULL,
+  account_id   INT       DEFAULT NULL,
+  product_id   INT       NOT NULL,
+  quantity     INT       NOT NULL DEFAULT 1,
+  version      INT       NOT NULL DEFAULT 1,
+  created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (cart_id),
   FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+  FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+  INDEX idx_session_id (session_id),
+  UNIQUE KEY uk_session_product (session_id, product_id)
+);
+
+-- Orders table
+CREATE TABLE orders (
+  id                    INT           NOT NULL AUTO_INCREMENT,
+  session_id            VARCHAR(255)   NOT NULL,
+  customer_first_name   VARCHAR(100)   NOT NULL,
+  customer_last_name    VARCHAR(100)   NOT NULL,
+  customer_phone        VARCHAR(20)    NOT NULL,
+  customer_email        VARCHAR(150)   NOT NULL,
+  delivery_method       ENUM('pickup', 'delivery') NOT NULL,
+  delivery_date         DATE           DEFAULT NULL,
+  delivery_time_window  VARCHAR(50)    DEFAULT NULL,
+  delivery_city         VARCHAR(100)   DEFAULT NULL,
+  delivery_street       VARCHAR(255)   DEFAULT NULL,
+  delivery_postal_code  VARCHAR(20)    DEFAULT NULL,
+  payment_method        ENUM('cash', 'card', 'ewallet') NOT NULL,
+  total_amount          DECIMAL(10, 2) NOT NULL,
+  status                ENUM('pending', 'confirmed', 'completed', 'cancelled') NOT NULL DEFAULT 'pending',
+  created_at            TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  version               INT            NOT NULL DEFAULT 1,
+  PRIMARY KEY (id),
+  INDEX idx_session_id (session_id),
+  INDEX idx_status (status)
+);
+
+-- Order items table
+CREATE TABLE order_items (
+  id                  INT           NOT NULL AUTO_INCREMENT,
+  order_id            INT           NOT NULL,
+  product_id          INT           NOT NULL,
+  quantity            INT           NOT NULL,
+  price_at_purchase   DECIMAL(10, 2) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+  INDEX idx_order_id (order_id)
 );
 
 --  SEED: 1 Guest Account
@@ -163,4 +208,3 @@ INSERT INTO products (name, description, price, category, image_url) VALUES
  'Veterinary-recommended probiotic supplement that promotes digestive health and microflora balance.',
  549.00, 'medicine',
  'https://images-na.ssl-images-amazon.com/images/I/71kO1gkHm0L._AC_SL1500_.jpg');
-

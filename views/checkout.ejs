@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout – FetchIT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <style>
+    :root {
+      --amber: #F6BD60;
+      --cream: #F7EDE2;
+      --teal: #84A59D;
+      --teal-dark: #6b8e86;
+      --coral: #F28482;
+      --text: #1a1a1a;
+      --muted: #6F6B6B;
+      --border: #D1B9B9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 4rem;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 3rem;
+      background: rgba(247, 237, 226, 0.92);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--coral);
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--coral); }
+
+    /* CHECKOUT PAGE */
+    .checkout-page {
+      padding: 8rem 5rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .checkout-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .checkout-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .checkout-header p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .checkout-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* FORM SECTIONS */
+    .checkout-form {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .form-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .form-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--amber);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .form-group label .required {
+      color: var(--coral);
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+
+    .form-group input::placeholder {
+      color: #aaa;
+    }
+
+    /* RADIO BUTTONS */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .radio-option:hover {
+      border-color: var(--teal);
+    }
+
+    .radio-option.selected {
+      border-color: var(--teal);
+      background: rgba(132, 165, 157, 0.1);
+    }
+
+    .radio-option input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--teal);
+    }
+
+    .radio-label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .radio-label .option-title {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .radio-label .option-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* DELIVERY FIELDS */
+    .delivery-fields {
+      display: none;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .delivery-fields.visible {
+      display: block;
+    }
+
+    .delivery-fields .form-row {
+      margin-bottom: 1rem;
+    }
+
+    /* ORDER SUMMARY */
+    .order-summary {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 100px;
+    }
+
+    .order-summary h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--amber);
+    }
+
+    .summary-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .summary-item {
+      display: flex;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .item-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .item-price {
+      font-weight: 600;
+      color: var(--coral);
+    }
+
+    .summary-totals {
+      border-top: 2px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .summary-row.total {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .summary-row .label {
+      color: var(--muted);
+    }
+
+    .summary-row .value {
+      font-weight: 500;
+    }
+
+    .summary-row.total .value {
+      color: var(--coral);
+    }
+
+    /* SUBMIT BUTTON */
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 1.5rem;
+    }
+
+    .submit-btn:hover {
+      background: var(--teal-dark);
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* EMPTY CART */
+    .empty-cart {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .empty-cart .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-cart h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-cart p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-cart .btn-shop {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: var(--teal);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .empty-cart .btn-shop:hover {
+      background: var(--teal-dark);
+    }
+
+    /* ERROR MESSAGE */
+    .error-msg {
+      color: var(--coral);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 968px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+
+      .order-summary {
+        position: static;
+        order: -1;
+      }
+
+      .checkout-page {
+        padding: 6rem 1.5rem 2rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="/">🐾 FetchIT</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-cart" onclick="openCart()">
+      <span class="nav-cart-icon">🛒</span>
+    </div>
+  </nav>
+
+  <!-- CHECKOUT PAGE -->
+  <main class="checkout-page">
+    <div class="checkout-header">
+      <h1>Checkout</h1>
+      <p>Complete your order by filling in the details below</p>
+    </div>
+
+    <% if (cartItems && cartItems.length > 0) { %>
+    <div class="checkout-container">
+      <!-- CHECKOUT FORM -->
+      <form class="checkout-form" id="checkoutForm" action="/checkout/process" method="POST">
+        
+        <!-- User Information -->
+        <section class="form-section">
+          <h2>👤 Customer Information</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name <span class="required">*</span></label>
+              <input type="text" id="firstName" name="firstName" required placeholder="Juan" />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name <span class="required">*</span></label>
+              <input type="text" id="lastName" name="lastName" required placeholder="Dela Cruz" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number <span class="required">*</span></label>
+              <input type="tel" id="phone" name="phone" required placeholder="09171234567" />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address <span class="required">*</span></label>
+              <input type="email" id="email" name="email" required placeholder="juan@example.com" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Delivery Method -->
+        <section class="form-section">
+          <h2>🚚 Delivery Method</h2>
+          <div class="radio-group">
+            <label class="radio-option selected" id="pickupOption">
+              <input type="radio" name="deliveryMethod" value="pickup" checked />
+              <div class="radio-label">
+                <span class="option-title">In-Store Pickup</span>
+                <span class="option-desc">Pick up your order at our store location</span>
+              </div>
+            </label>
+            <label class="radio-option" id="deliveryOption">
+              <input type="radio" name="deliveryMethod" value="delivery" />
+              <div class="radio-label">
+                <span class="option-title">Delivery</span>
+                <span class="option-desc">Have your order delivered to your address</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Conditional Delivery Fields -->
+          <div class="delivery-fields" id="deliveryFields">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="deliveryDate">Delivery Date <span class="required">*</span></label>
+                <input type="date" id="deliveryDate" name="deliveryDate" />
+              </div>
+              <div class="form-group">
+                <label for="timeWindow">Preferred Time Window <span class="required">*</span></label>
+                <select id="timeWindow" name="timeWindow">
+                  <option value="">Select time...</option>
+                  <option value="morning">Morning (8AM - 12PM)</option>
+                  <option value="afternoon">Afternoon (12PM - 5PM)</option>
+                  <option value="evening">Evening (5PM - 9PM)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label for="city">City <span class="required">*</span></label>
+                <input type="text" id="city" name="city" placeholder="Quezon City" />
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label for="street">Street Address <span class="required">*</span></label>
+                <input type="text" id="street" name="street" placeholder="123 Mabini Street, Project 6" />
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label for="postalCode">Postal Code <span class="required">*</span></label>
+                <input type="text" id="postalCode" name="postalCode" placeholder="1105" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Payment Method -->
+        <section class="form-section">
+          <h2>💳 Payment Method</h2>
+          <div class="radio-group">
+            <label class="radio-option selected" id="cashOption">
+              <input type="radio" name="paymentMethod" value="cash" checked />
+              <div class="radio-label">
+                <span class="option-title">Cash on Delivery</span>
+                <span class="option-desc">Pay with cash when you receive your order</span>
+              </div>
+            </label>
+            <label class="radio-option" id="cardOption">
+              <input type="radio" name="paymentMethod" value="card" />
+              <div class="radio-label">
+                <span class="option-title">Credit/Debit Card</span>
+                <span class="option-desc">Pay securely with your card</span>
+              </div>
+            </label>
+            <label class="radio-option" id="ewalletOption">
+              <input type="radio" name="paymentMethod" value="ewallet" />
+              <div class="radio-label">
+                <span class="option-title">E-Wallet</span>
+                <span class="option-desc">Pay with GCash, Maya, or PayMaya</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <button type="submit" class="submit-btn">Place Order</button>
+      </form>
+
+      <!-- ORDER SUMMARY -->
+      <aside class="order-summary">
+        <h2>📦 Order Summary</h2>
+        <div class="summary-items">
+          <% cartItems.forEach(item => { %>
+            <div class="summary-item">
+              <div class="item-img">
+                <% if (item.product_image) { %>
+                  <img src="<%= item.product_image %>" alt="<%= item.product_name %>" />
+                <% } else { %>
+                  🐾
+                <% } %>
+              </div>
+              <div class="item-details">
+                <div class="item-name"><%= item.product_name %></div>
+                <div class="item-meta">Qty: <%= item.quantity %></div>
+              </div>
+              <div class="item-price">₱<%= (item.product_price * item.quantity).toFixed(2) %></div>
+            </div>
+          <% }); %>
+        </div>
+        <div class="summary-totals">
+          <div class="summary-row">
+            <span class="label">Subtotal</span>
+            <span class="value">₱<%= subtotal.toFixed(2) %></span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Delivery Fee</span>
+            <span class="value" id="deliveryFee">₱0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span class="label">Total</span>
+            <span class="value" id="totalAmount">₱<%= subtotal.toFixed(2) %></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <% } else { %>
+    <!-- Empty Cart -->
+    <div class="empty-cart">
+      <div class="icon">🛒</div>
+      <h3>Your cart is empty</h3>
+      <p>Add some products to your cart before checking out</p>
+      <a href="/products" class="btn-shop">Browse Products</a>
+    </div>
+    <% } %>
+  </main>
+
+  <!-- Include partials -->
+  <%- include('partials/cart-menu') %>
+  <%- include('partials/toast') %>
+
+  <script>
+    var DELIVERY_FEE = 100.00;
+    var cartSubtotal = <%= subtotal %>;
+    
+    // Set minimum delivery date to tomorrow
+    var deliveryDateInput = document.getElementById('deliveryDate');
+    if (deliveryDateInput) {
+      var tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      deliveryDateInput.min = tomorrow.toISOString().split('T')[0];
+    }
+
+    // Handle delivery method radio buttons
+    var pickupRadio = document.querySelector('input[value="pickup"]');
+    var deliveryRadio = document.querySelector('input[value="delivery"]');
+    var deliveryFields = document.getElementById('deliveryFields');
+    var pickupOption = document.getElementById('pickupOption');
+    var deliveryOption = document.getElementById('deliveryOption');
+
+    function updateDeliveryFields() {
+      if (deliveryRadio && deliveryRadio.checked) {
+        deliveryFields.classList.add('visible');
+        // Set required attributes
+        document.getElementById('deliveryDate').required = true;
+        document.getElementById('timeWindow').required = true;
+        document.getElementById('city').required = true;
+        document.getElementById('street').required = true;
+        document.getElementById('postalCode').required = true;
+        // Update totals
+        updateTotals(true);
+      } else {
+        deliveryFields.classList.remove('visible');
+        // Remove required attributes
+        document.getElementById('deliveryDate').required = false;
+        document.getElementById('timeWindow').required = false;
+        document.getElementById('city').required = false;
+        document.getElementById('street').required = false;
+        document.getElementById('postalCode').required = false;
+        // Update totals
+        updateTotals(false);
+      }
+    }
+
+    function updateTotals(isDelivery) {
+      var deliveryFeeEl = document.getElementById('deliveryFee');
+      var totalAmountEl = document.getElementById('totalAmount');
+      
+      if (isDelivery) {
+        deliveryFeeEl.textContent = '₱' + DELIVERY_FEE.toFixed(2);
+        totalAmountEl.textContent = '₱' + (cartSubtotal + DELIVERY_FEE).toFixed(2);
+      } else {
+        deliveryFeeEl.textContent = '₱0.00';
+        totalAmountEl.textContent = '₱' + cartSubtotal.toFixed(2);
+      }
+    }
+
+    if (pickupRadio && deliveryRadio) {
+      pickupRadio.addEventListener('change', () => {
+        if (pickupRadio.checked) {
+          pickupOption.classList.add('selected');
+          deliveryOption.classList.remove('selected');
+          updateDeliveryFields();
+        }
+      });
+
+      deliveryRadio.addEventListener('change', () => {
+        if (deliveryRadio.checked) {
+          deliveryOption.classList.add('selected');
+          pickupOption.classList.remove('selected');
+          updateDeliveryFields();
+        }
+      });
+    }
+
+    // Handle payment method selection styling
+    const paymentOptions = [
+      { radio: document.querySelector('input[value="cash"]'), label: document.getElementById('cashOption') },
+      { radio: document.querySelector('input[value="card"]'), label: document.getElementById('cardOption') },
+      { radio: document.querySelector('input[value="ewallet"]'), label: document.getElementById('ewalletOption') }
+    ];
+
+    paymentOptions.forEach(option => {
+      if (option.radio && option.label) {
+        option.radio.addEventListener('change', () => {
+          paymentOptions.forEach(opt => opt.label.classList.remove('selected'));
+          if (option.radio.checked) {
+            option.label.classList.add('selected');
+          }
+        });
+      }
+    });
+
+    // Form validation
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) {
+      checkoutForm.addEventListener('submit', (e) => {
+        const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked');
+        
+        if (deliveryMethod && deliveryMethod.value === 'delivery') {
+          // Additional validation for delivery fields can be added here
+          const requiredFields = ['deliveryDate', 'timeWindow', 'city', 'street', 'postalCode'];
+          for (const fieldId of requiredFields) {
+            const field = document.getElementById(fieldId);
+            if (!field.value.trim()) {
+              e.preventDefault();
+              alert('Please fill in all delivery details');
+              field.focus();
+              return;
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

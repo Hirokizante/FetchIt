@@ -11,13 +11,16 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">🐾 FetchIT</a>
+  <a class="nav-logo" href="/">🐾 FetchIT</a>
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/products">Products</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <div class="nav-cart" onclick="openCart()">
+    <span class="nav-cart-icon">🛒</span>
+  </div>
 </nav>
 
 <!-- PRODUCTS -->
@@ -52,7 +55,7 @@
               <div class="product-price">$<%= product.price %></div>
               <div class="product-actions">
                 <button class="btn btn-view" onclick="viewProduct(<%= product.product_id %>)">View</button>
-                <button class="btn btn-cart" onclick="addToCart(<%= product.product_id %>)">Add to Cart</button>
+                <button class="btn btn-cart" onclick="addToCart(<%= product.product_id %>, 1)">Add to Cart</button>
               </div>
             </div>
           </div>
@@ -61,6 +64,10 @@
     </div>
   </div>
 </section>
+
+<!-- Include partials -->
+<%- include('partials/cart-menu') %>
+<%- include('partials/toast') %>
 
 <script>
   const searchInput = document.getElementById('searchInput');
@@ -74,10 +81,6 @@
       card.style.display = name.includes(term) ? 'block' : 'none';
     });
   });
-
-  function addToCart(productId) {
-    alert('Added product ' + productId + ' to cart!');
-  }
 
   function viewProduct(productId) {
     window.location.href = '/products/' + productId;
