@@ -1,3 +1,6 @@
+**DEPLOYED LINK:**
+fetchit-production.up.railway.app
+
 To run the project, open the terminal in the project directory and initialize Node.js by running:
 
 ## npm init
