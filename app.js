@@ -1,6 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const PORT = process.env.PORT || 3000;
+
 
 const app = express();
 const db = require('./data/db');
@@ -33,4 +35,6 @@ app.use((err, req, res, next) => {
   res.status(500).render('500', { pageTitle: 'Server Error' });
 });
 
-app.listen(3000);
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
